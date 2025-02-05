@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            width: 70%;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #resume-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #resume {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        #download-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Resume Builder</h1>
+        <form id="resume-form">
+            <!-- Personal Information Section -->
+            <div class="section">
+                <h3>Personal Information</h3>
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+
+                <label for="phone">Phone:</label>
+                <input type="text" id="phone" required>
+
+                <label for="linkedin">LinkedIn:</label>
+                <input type="url" id="linkedin">
+            </div>
+
+            <!-- Work Experience Section -->
+            <div class="section">
+                <h3>Work Experience</h3>
+                <label for="job-title">Job Title:</label>
+                <input type="text" id="job-title" required>
+
+                <label for="company">Company:</label>
+                <input type="text" id="company" required>
+
+                <label for="job-description">Job Description:</label>
+                <textarea id="job-description" required></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">Generate Resume</button>
+        </form>
+
+        <!-- Resume Preview Section -->
+        <div id="resume-preview">
+            <h2>Resume Preview</h2>
+            <div id="resume"></div>
+            <button id="download-btn" style="display:none;">Download PDF</button>
+        </div>
+    </div>
+
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        document.getElementById('resume-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Collect user data
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const linkedin = document.getElementById('linkedin').value;
+
+            const jobTitle = document.getElementById('job-title').value;
+            const company = document.getElementById('company').value;
+            const jobDescription = document.getElementById('job-description').value;
+
+            // Display resume preview
+            const resumeContent = `
+                <h2>${name}</h2>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                <p><strong>LinkedIn:</strong> <a href="${linkedin}" target="_blank">${linkedin}</a></p>
+                
+                <h3>Work Experience</h3>
+                <p><strong>Job Title:</strong> ${jobTitle}</p>
+                <p><strong>Company:</strong> ${company}</p>
+                <p><strong>Description:</strong> ${jobDescription}</p>
+            `;
+
+            document.getElementById('resume').innerHTML = resumeContent;
+            document.getElementById('download-btn').style.display = 'inline-block';
+
+            // Handle PDF generation
+            document.getElementById('download-btn').addEventListener('click', function () {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                doc.text(`Name: ${name}`, 10, 10);
+                doc.text(`Email: ${email}`, 10, 20);
+                doc.text(`Phone: ${phone}`, 10, 30);
+                doc.text(`LinkedIn: ${linkedin}`, 10, 40);
+
+                doc.text(`Job Title: ${jobTitle}`, 10, 60);
+                doc.text(`Company: ${company}`, 10, 70);
+                doc.text(`Description: ${jobDescription}`, 10, 80);
+
+                doc.save(`${name}-Resume.pdf`);
+            });
+        });
+    </script>
+</body>
+
+</html>
